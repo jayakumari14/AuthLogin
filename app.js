@@ -35,6 +35,29 @@ app.post("/create", (req, res) => {
   });
 });
 
+app.get("/logout", (req, res) => {
+  res.cookie("token", "");
+  res.redirect("/");
+  //   res.send("logout page");
+});
+
+app.get("/login", (req, res) => {
+  //   res.cookie("token", "");
+  res.render("login");
+});
+
+app.post("/login", async (req, res) => {
+  let user = await userModel.findOne({ email: req.body.email });
+  if (!user) return res.send("something went wrong");
+  bcrypt.compare(req.body.password, user.password, function (err, result) {
+    if (result) {
+      let token = jwt.sign({ email: user.email }, "secretttttt");
+      res.cookie("accessToken", token);
+      res.send("you are logged in");
+    } else res.send("you cant login");
+  });
+});
+
 app.listen(3000, () => {
   console.log("listening to port 3000");
 });
