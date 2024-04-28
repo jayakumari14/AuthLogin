@@ -4,6 +4,7 @@ const path = require("path");
 const app = express();
 const cookieParser = require("cookie-parser");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 app.set("view engine", "ejs");
 app.use(express.json());
@@ -26,9 +27,11 @@ app.post("/create", (req, res) => {
         password: hash,
         age,
       });
+
+      let token = jwt.sign({ email }, "secretttttt");
+      res.cookie("accessToken", token);
       res.send(createdUser);
     });
-    console.log("salt", salt);
   });
 });
 
